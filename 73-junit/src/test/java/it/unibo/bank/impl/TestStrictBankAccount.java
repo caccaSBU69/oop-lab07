@@ -6,11 +6,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for the {@link StrictBankAccount} class.
  */
 class TestStrictBankAccount {
+    private static final int AMOUNT = 100;
 
     // Create a new AccountHolder and a StrictBankAccount for it each time tests are executed.
     private AccountHolder mRossi;
@@ -20,31 +22,35 @@ class TestStrictBankAccount {
      * Prepare the tests.
      */
     @BeforeEach
-    public void setUp() {
-        fail("To be implemented");
+    void setUp() {
+        this.mRossi = new AccountHolder("Mario", "Rossi", 1);
+        this.bankAccount = new StrictBankAccount(mRossi, 0.0);
     }
 
     /**
      * Test the initial state of the StrictBankAccount.
      */
     @Test
-    public void testInitialization() {
-        fail("To be implemented");
+    void testInitialization() {
+        assertEquals(0.0, bankAccount.getBalance());
+        assertEquals(mRossi, bankAccount.getAccountHolder());
     }
 
     /**
      * Perform a deposit of 100€, compute the management fees, and check that the balance is correctly reduced.
      */
     @Test
-    public void testManagementFees() {
-        fail("To be implemented");
+    void testManagementFees() {
+        bankAccount.deposit(mRossi.getUserID(), AMOUNT);
+        bankAccount.chargeManagementFees(mRossi.getUserID());
+        assertEquals(bankAccount.getBalance()-bankA, bankAccount.getBalance());
     }
 
     /**
      * Test that withdrawing a negative amount causes a failure.
      */
     @Test
-    public void testNegativeWithdraw() {
+    void testNegativeWithdraw() {
         fail("To be implemented");
     }
 
@@ -52,7 +58,7 @@ class TestStrictBankAccount {
      * Test that withdrawing more money than it is in the account is not allowed.
      */
     @Test
-    public void testWithdrawingTooMuch() {
+    void testWithdrawingTooMuch() {
         fail("To be implemented");
     }
 }
