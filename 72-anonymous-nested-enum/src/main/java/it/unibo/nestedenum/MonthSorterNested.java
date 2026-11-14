@@ -9,6 +9,33 @@ import java.util.Objects;
  */
 public final class MonthSorterNested implements MonthSorter {
 
+    /**
+     * Creates a new {@code MonthSorterNested}.
+     */
+    public MonthSorterNested() {
+        // Nothing to initialize
+    }
+
+    @Override
+    public Comparator<String> sortByDays() {
+        return new Comparator<>() {
+            @Override
+            public int compare(final String o1, final String o2) {
+                return Integer.compare(Month.fromString(o1).getDays(), Month.fromString(o2).getDays());
+            }
+        };
+    }
+
+    @Override
+    public Comparator<String> sortByOrder() {
+        return new Comparator<>() {
+            @Override
+            public int compare(final String o1, final String o2) {
+                return Month.fromString(o1).compareTo(Month.fromString(o2));
+            }
+        };
+    }
+
     private enum Month {
         JANUARY(31),
         FEBRUARY(28),
@@ -29,50 +56,26 @@ public final class MonthSorterNested implements MonthSorter {
             this.days = days;
         }
 
-        public int getDays() {
+        int getDays() {
             return days;
         }
 
-        public static Month fromString(final String name) {
-        final String upper = Objects.requireNonNull(name, "The name cannot be null")
-            .toUpperCase(Locale.ROOT);
-        Month result = null;
-        for (final Month m : Month.values()) {
-            if (m.name().startsWith(upper)) {
-                if (result != null) {
-                    throw new IllegalArgumentException("Ambiguous month name: " + name);
+        static Month fromString(final String name) {
+            final String upper = Objects.requireNonNull(name, "The name cannot be null")
+                .toUpperCase(Locale.ROOT);
+            Month result = null;
+            for (final Month m : values()) {
+                if (m.name().startsWith(upper)) {
+                    if (result != null) {
+                        throw new IllegalArgumentException("Ambiguous month name: " + name);
+                    }
+                    result = m;
                 }
-                result = m;
             }
+            if (result == null) {
+                throw new IllegalArgumentException("No month matches: " + name);
+            }
+            return result;
         }
-        if (result == null) {
-            throw new IllegalArgumentException("No month matches: " + name);
-        }
-        return result;
-    }
-    }
-
-    private static final class SortByMonthOrder implements Comparator<String> {
-        @Override
-        public int compare(final String o1, final String o2) {
-            return Month.fromString(o1).compareTo(Month.fromString(o2));
-        }
-    }
-
-    private static final class SortByDate implements Comparator<String> {
-        @Override
-        public int compare(final String o1, final String o2) {
-            return Integer.compare(Month.fromString(o1).getDays(), Month.fromString(o2).getDays());
-        }
-    }
-
-    @Override
-    public Comparator<String> sortByDays() {
-        return new SortByDate();
-    }
-
-    @Override
-    public Comparator<String> sortByOrder() {
-        return new SortByMonthOrder();
     }
 }
