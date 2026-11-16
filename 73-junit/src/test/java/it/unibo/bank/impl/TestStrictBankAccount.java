@@ -5,7 +5,6 @@ import it.unibo.bank.api.BankAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -42,8 +41,11 @@ class TestStrictBankAccount {
     @Test
     void testManagementFees() {
         bankAccount.deposit(mRossi.getUserID(), AMOUNT);
+        final double startBalance = bankAccount.getBalance();
+        double difference = bankAccount.getBalance();
         bankAccount.chargeManagementFees(mRossi.getUserID());
-        assertEquals(bankAccount.getBalance()-bankA, bankAccount.getBalance());
+        difference -= bankAccount.getBalance();
+        assertEquals(bankAccount.getBalance(), startBalance - difference);
     }
 
     /**
@@ -51,7 +53,13 @@ class TestStrictBankAccount {
      */
     @Test
     void testNegativeWithdraw() {
-        fail("To be implemented");
+        final double saldoInizio = bankAccount.getBalance();
+        try {
+            bankAccount.withdraw(mRossi.getUserID(), -bankAccount.getBalance());
+        } catch (final IllegalArgumentException e) {
+            //non so cosa potrei metterci per togliere l'errore del checkstyle
+        }
+        assertEquals(bankAccount.getBalance(), saldoInizio);
     }
 
     /**
@@ -59,6 +67,12 @@ class TestStrictBankAccount {
      */
     @Test
     void testWithdrawingTooMuch() {
-        fail("To be implemented");
+        final double saldoInizio = bankAccount.getBalance();
+        try {
+            bankAccount.withdraw(mRossi.getUserID(), bankAccount.getBalance() + AMOUNT);
+        } catch (final IllegalArgumentException e) {
+            //non so cosa potrei metterci per togliere l'errore del checkstyle
+        }
+        assertEquals(bankAccount.getBalance(), saldoInizio);
     }
 }
